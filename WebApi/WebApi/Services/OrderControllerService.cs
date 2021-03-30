@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -16,11 +15,11 @@ namespace WebApi.Services
 
         }
 
-        public async Task AddAsync(OrderData orderData,string systemType, CancellationToken cancellationToken)
+        public async Task<Order> AddAsync(OrderData orderData,string systemType, CancellationToken cancellationToken)
         {
             var entity = new Order
             {
-                OrderNumber = Int64.Parse(orderData.OrderNumber),
+                OrderNumber = long.Parse(orderData.OrderNumber),
                 CreatedAt=orderData.CreatedAt,
                 SourceOrder=JsonConvert.SerializeObject(orderData),
                 SystemType=systemType
@@ -28,14 +27,10 @@ namespace WebApi.Services
 
             var adder = await _context.Orders.AddAsync(entity, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
-            
+            entity = adder.Entity;
+            return entity;
         }
 
-        public async Task<IReadOnlyList<Order>> GetUnconvertedOrders(CancellationToken cancellationToken)
-        {
-            return await _context.Orders
-                .Where(x => x.ConvertedOrder == null)
-                .ToListAsync(cancellationToken);
-        }
+        
     }
 }

@@ -20,6 +20,9 @@ namespace WebApi.Services
                     .HasIdentityOptions(null, null, 0L, null, null, null)
                     .UseIdentityAlwaysColumn();
 
+                entity.Property(e => e.Processed)
+                    .HasColumnName("processed");
+
                 entity.Property(e => e.ConvertedOrder).HasColumnName("converted_order");
 
                 entity.Property(e => e.CreatedAt)

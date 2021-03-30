@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApi.Models;
+using WebApi.Services;
 
 namespace WebApi.Controllers
 {
@@ -13,15 +14,17 @@ namespace WebApi.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
-        public OrderController()
+        private readonly OrderControllerService _orderControllerService;
+        public OrderController(OrderControllerService orderControllerService)
         {
-
+            _orderControllerService = orderControllerService;
         }
 
         [HttpPost("{systemType}")]
-        public IActionResult PostOrder(string systemType, [FromBody] OrderData value, CancellationToken cancellationToken)
+        public async Task<ActionResult<Order>> PostOrder(string systemType, [FromBody] OrderData orderData, CancellationToken cancellationToken)
         {
-            return Ok();
+            var res=await _orderControllerService.AddAsync(orderData, systemType, cancellationToken);
+            return Ok(res);
         }
     }
 
